@@ -2,30 +2,38 @@ let buttonColors = ["red", "blue", "green", "yellow"];
 let gamePattern = [];
 let userClickedPattern = [];
 let level = 0;
+let started = false;
 
-$(document).one("keydown", function () {
-	nextSequence();
+$(document).keypress(function () {
+	if (!started) {
+		$("h1").text("Level" + " " + level);
+		nextSequence();
+		started = true;
+	}
 });
 
 function nextSequence() {
+	userClickedPattern = [];
+	$("h1").text("Level" + " " + level);
 	let randomNumber = Math.floor(Math.random() * 4);
 	let randomChosenColor = buttonColors[randomNumber];
 	gamePattern.push(randomChosenColor);
-	let randomButton = $("#" + randomChosenColor);
+	$("#" + randomChosenColor);
 	animatePress(randomChosenColor);
-	playSound($(randomButton).attr("id"));
-	$("h1").text("Level" + " " + level);
+	playSound(randomChosenColor);
+
 	level++;
+	console.log(gamePattern);
 }
 
-for (i = 0; i < buttonColors.length; i++) {
-	$("#" + buttonColors[i]).click(function () {
-		let buttonId = $(this).attr("id");
-		animatePress(buttonId);
-		playSound(buttonId);
-		handler(buttonId);
-	});
-}
+$(".btn").click(function () {
+	let userChosenColor = $(this).attr("id");
+	userClickedPattern.push(userChosenColor);
+	playSound(userChosenColor);
+	animatePress(userChosenColor);
+	checkAnswer(userClickedPattern.length - 1);
+});
+
 function playSound(name) {
 	switch (name) {
 		case "green":
@@ -59,10 +67,27 @@ function animatePress(currentColor) {
 	}, 100);
 }
 
-function handler(buttonId) {
-	let userChosenColor = buttonId;
-	userClickedPattern.push(userChosenColor);
-	console.log(userClickedPattern);
+function checkAnswer(currentLevel) {
+	if (userClickedPattern[currentLevel] === gamePattern[currentLevel]) {
+		if (userClickedPattern.length === gamePattern.length) {
+			setTimeout(function () {
+				nextSequence();
+			}, 1000);
+		}
+	} else {
+		playSound("wrong");
+		$("body").addClass("game-over");
+		$("h1").text("Game Over, Press Any Key To Restart");
+		setTimeout(function () {
+			$("body").removeClass("game-over");
+		}, 200);
+
+		startOver();
+	}
 }
 
-function checkAnswer() {}
+function startOver() {
+	level = 0;
+	gamePattern = [];
+	started = false;
+}
