@@ -6,7 +6,7 @@ let started = false;
 
 $(document).click(function () {
 	if (!started) {
-		$("h1").text("Level" + " " + level + 1);
+		$("h1").text("Level" + " " + `${level + 1}`);
 		nextSequence();
 		started = true;
 	}
@@ -14,7 +14,7 @@ $(document).click(function () {
 
 function nextSequence() {
 	userClickedPattern = [];
-	$("h1").text("Level" + " " + level + 1);
+	$("h1").text("Level" + " " + `${level + 1}`);
 	let randomNumber = Math.floor(Math.random() * 4);
 	let randomChosenColor = buttonColors[randomNumber];
 	gamePattern.push(randomChosenColor);
